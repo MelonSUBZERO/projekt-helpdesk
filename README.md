@@ -30,8 +30,8 @@ Aplikacja internetowa do zgłaszania usterek i obsługi ich przez techników. Fr
 1. Sklonuj repozytorium i przejdź do katalogu projektu:
 
    ```bash
-   git clone <URL_REPOZYTORIUM>
-   cd helpdesk
+   git clone https://github.com/MelonSUBZERO/projekt-helpdesk.git
+   cd projekt-helpdesk
    ```
 
 2. Zainstaluj zależności:
@@ -69,7 +69,7 @@ npm run start
 
 ## Wdrożenie na VPS w Coolify
 
-PocketBase jest osobną, istniejącą usługą. Wdrożenie aplikacji nie tworzy drugiego PocketBase ani nie zmienia jego kolekcji, reguł API ani danych.
+Wdrożenie składa się z dwóch osobnych usług: aplikacji Next.js oraz PocketBase. PocketBase jest istniejącą usługą backendową. Wdrożenie frontendu nie tworzy drugiego PocketBase ani nie zmienia jego kolekcji, reguł API ani danych.
 
 ### Usługa PocketBase
 
@@ -95,18 +95,20 @@ PocketBase jest osobną, istniejącą usługą. Wdrożenie aplikacji nie tworzy 
 
 Dockerfile buduje aplikację w Node.js 22 Alpine i uruchamia wynik Next.js w trybie standalone.
 
-## Konta testowe
+## Fikcyjne konta testowe
 
-Poniższe adresy są przeznaczone wyłącznie do testów i muszą odpowiadać kontom utworzonym w PocketBase:
+Poniższe dane są fikcyjne i przeznaczone wyłącznie do demonstracji. Aby się nimi zalogować, utwórz odpowiadające im konta w testowej instancji PocketBase i przypisz właściwe role:
 
-- Użytkownik: `test-user@gmail.com`
-- Technik: `test=technik@gmail.com`
+| Rola | E-mail | Hasło |
+| --- | --- | --- |
+| Użytkownik | `test-user@gmail.com` | `useruser` |
+| Technik | `test=technik@gmail.com` | `useruser` |
 
-Hasła nie są zapisane w repozytorium. Ustawiaj je i przekazuj poza publicznym README. Przed upublicznieniem repozytorium zmień hasła tych kont — obecne dane logowania zostały użyte podczas testów. Nie używaj tych kont ani prostych haseł w środowisku produkcyjnym.
+Nie są to dane rzeczywistych użytkowników. Nie używaj tych kont ani hasła `useruser` w środowisku produkcyjnym.
 
 ## Bezpieczeństwo i konfiguracja
 
 - `.env.example` jest tylko wzorcem; lokalnie używaj `.env.local`.
-- Nie commituj `.env.local`, haseł, tokenów ani kluczy. Pliki `.env*` poza `.env.example` są ignorowane przez Git.
+- Nie commituj `.env.local`, produkcyjnych haseł, tokenów ani kluczy. Pliki `.env*` poza `.env.example` są ignorowane przez Git. Hasła podane w sekcji kont testowych są fikcyjnymi danymi demonstracyjnymi.
 - Konto technika nie nadaje uprawnień superusera. Role i uprawnienia są egzekwowane przez PocketBase.
 - Aplikacja łączy się z PocketBase bezpośrednio z przeglądarki; nie używa poświadczeń superusera.
