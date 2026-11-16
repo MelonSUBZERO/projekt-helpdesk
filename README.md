@@ -49,7 +49,7 @@ Aplikacja internetowa do zgłaszania usterek i obsługi ich przez techników. Fr
    Ustaw w `.env.local` adres bazowy PocketBase (bez `/api`):
 
    ```dotenv
-   NEXT_PUBLIC_POCKETBASE_URL=https://adres-pocketbase.example.com
+   NEXT_PUBLIC_POCKETBASE_URL=https://baza-helpdesk.mm.zs1mm.edu.pl
    ```
 
 4. Uruchom aplikację:
