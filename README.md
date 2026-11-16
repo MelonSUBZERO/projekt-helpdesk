@@ -36,11 +36,13 @@ Aplikacja internetowa do zgłaszania usterek i obsługi ich przez techników. Fr
 
 2. Zainstaluj zależności:
 
-   ```bash
-   npm ci
+   ```powershell
+   npm.cmd ci
    ```
 
-3. Utwórz lokalny plik konfiguracji. W PowerShell:
+   W PowerShellu na Windows użyj `npm.cmd`, jeśli uruchomienie `npm` blokuje polityka wykonywania skryptów. W innych terminalach użyj `npm ci`.
+
+3. Skopiuj szablon konfiguracji do `.env.local`. Next.js odczytuje `.env.local`, a `.env.example` jest tylko wzorem zachowywanym w repozytorium. W PowerShell:
 
    ```powershell
    Copy-Item .env.example .env.local
@@ -54,11 +56,24 @@ Aplikacja internetowa do zgłaszania usterek i obsługi ich przez techników. Fr
 
 4. Uruchom aplikację:
 
-   ```bash
-   npm run dev
+   ```powershell
+   npm.cmd run dev
    ```
 
+   W innych terminalach użyj `npm run dev`.
+
 5. Otwórz `http://localhost:3000`.
+
+### Alternatywa: uruchomienie lokalne w Dockerze
+
+Ta opcja nie wymaga Node.js ani npm zainstalowanych na komputerze, ale wymaga Docker Desktop i uruchomionego Dockera. W PowerShellu, w katalogu projektu, wykonaj:
+
+```powershell
+docker build --build-arg NEXT_PUBLIC_POCKETBASE_URL=https://baza-helpdesk.mm.zs1mm.edu.pl -t projekt-helpdesk .
+docker run --rm -p 3000:3000 projekt-helpdesk
+```
+
+Następnie otwórz `http://localhost:3000`. Zależności są pobierane podczas budowania obrazu, więc ta opcja nadal wymaga połączenia z internetem i może nie pomóc, jeśli pobieranie pakietów jest blokowane. Dockerfile uruchamia build produkcyjny; po zmianach w kodzie zbuduj obraz ponownie.
 
 Do sprawdzenia builda produkcyjnego:
 
