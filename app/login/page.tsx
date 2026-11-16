@@ -56,7 +56,7 @@ export default function LoginPage() {
     <div className="flex min-h-[70vh] items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-center text-2xl">Logowanie - test webhook</CardTitle>
+          <CardTitle className="text-center text-2xl">Logowanie</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
