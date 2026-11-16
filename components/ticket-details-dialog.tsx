@@ -104,6 +104,15 @@ export function TicketDetailsDialog({
     [],
   );
 
+  const priorityLabel = useMemo(
+    () => ({
+      niski: "Niski",
+      sredni: "Średni",
+      wysoki: "Wysoki",
+    }),
+    [],
+  );
+
   if (!ticket) {
     return null;
   }
@@ -128,7 +137,9 @@ export function TicketDetailsDialog({
                 <div className="flex flex-wrap gap-2">
                   <Badge>{statusLabel[ticket.status as keyof typeof statusLabel] ?? ticket.status}</Badge>
                   <Badge variant="secondary">{categoryLabel[ticket.kategoria as keyof typeof categoryLabel] ?? ticket.kategoria}</Badge>
-                  <Badge variant="outline">{ticket.priorytet}</Badge>
+                  <Badge variant="outline">
+                    {priorityLabel[ticket.priorytet as keyof typeof priorityLabel] ?? ticket.priorytet}
+                  </Badge>
                 </div>
 
                 <div>

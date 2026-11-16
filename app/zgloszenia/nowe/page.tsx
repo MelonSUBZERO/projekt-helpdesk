@@ -217,6 +217,7 @@ export default function NewTicketPage() {
                     {...register("priorytet", { required: "Priorytet jest wymagany." })}
                   >
                     <option value="niski">Niski</option>
+                    <option value="sredni">Średni</option>
                     <option value="wysoki">Wysoki</option>
                   </select>
                   {errors.priorytet ? <p className="text-sm text-destructive">{errors.priorytet.message}</p> : null}

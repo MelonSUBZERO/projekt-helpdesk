@@ -89,6 +89,15 @@ export default function UserTicketsPage() {
     [],
   );
 
+  const priorityLabel = useMemo(
+    () => ({
+      niski: "Niski",
+      sredni: "Średni",
+      wysoki: "Wysoki",
+    }),
+    [],
+  );
+
   return (
     <RouteGuard allowedRoles={["uzytkownik"]}>
       <div className="space-y-6 py-6">
@@ -131,7 +140,9 @@ export default function UserTicketsPage() {
 
                 <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted-foreground">
                   <Badge variant="secondary">{categoryLabel[ticket.kategoria as keyof typeof categoryLabel] ?? ticket.kategoria}</Badge>
-                  <Badge variant="outline">Priorytet: {ticket.priorytet}</Badge>
+                  <Badge variant="outline">
+                    Priorytet: {priorityLabel[ticket.priorytet as keyof typeof priorityLabel] ?? ticket.priorytet}
+                  </Badge>
                   <span>{new Date(ticket.created).toLocaleString("pl-PL")}</span>
                 </div>
               </button>

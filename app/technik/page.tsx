@@ -37,6 +37,7 @@ export default function TechnikTicketsPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("-created");
   const [roomFilter, setRoomFilter] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -57,7 +58,15 @@ export default function TechnikTicketsPage() {
   const priorityOptions = [
     { value: "all", label: "Wszystkie" },
     { value: "niski", label: "Niski" },
+    { value: "sredni", label: "Średni" },
     { value: "wysoki", label: "Wysoki" },
+  ];
+
+  const sortOptions = [
+    { value: "-created", label: "Najnowsze" },
+    { value: "created", label: "Najstarsze" },
+    { value: "-priorytet,-created", label: "Priorytet: od najwyższego" },
+    { value: "priorytet,-created", label: "Priorytet: od najniższego" },
   ];
 
   const loadTicketList = async () => {
@@ -86,7 +95,7 @@ export default function TechnikTicketsPage() {
       const filter = filterParts.length > 0 ? filterParts.join(" && ") : "";
       const result = await pb.collection("tickets").getList(page - 1, 20, {
         filter,
-        sort: "-created",
+        sort: sortBy,
         expand: "autor",
       });
 
@@ -102,7 +111,7 @@ export default function TechnikTicketsPage() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void loadTicketList();
-  }, [user, role, page, statusFilter, priorityFilter, roomFilter]);
+  }, [user, role, page, statusFilter, priorityFilter, sortBy, roomFilter]);
 
   useEffect(() => {
     if (!user || role !== "technik") {
@@ -124,7 +133,7 @@ export default function TechnikTicketsPage() {
     return () => {
       unsubscribe?.();
     };
-  }, [user, role, statusFilter, priorityFilter, roomFilter]);
+  }, [user, role, statusFilter, priorityFilter, sortBy, roomFilter]);
 
   const statusLabel = useMemo(
     () => ({
@@ -138,6 +147,7 @@ export default function TechnikTicketsPage() {
   const priorityLabel = useMemo(
     () => ({
       niski: "Niski",
+      sredni: "Średni",
       wysoki: "Wysoki",
     }),
     [],
@@ -213,6 +223,7 @@ export default function TechnikTicketsPage() {
   const clearFilters = () => {
     setStatusFilter("all");
     setPriorityFilter("all");
+    setSortBy("-created");
     setRoomFilter("");
     setPage(1);
   };
@@ -233,7 +244,7 @@ export default function TechnikTicketsPage() {
 
         <Card>
           <CardContent className="space-y-4 p-4">
-            <div className="grid gap-3 md:grid-cols-4">
+            <div className="grid gap-3 md:grid-cols-5">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Status</label>
                 <select
@@ -263,6 +274,24 @@ export default function TechnikTicketsPage() {
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                 >
                   {priorityOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Sortowanie</label>
+                <select
+                  value={sortBy}
+                  onChange={(event) => {
+                    setSortBy(event.target.value);
+                    setPage(1);
+                  }}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                >
+                  {sortOptions.map((option) => (
                     <option key={option.value} value={option.value}>
                       {option.label}
                     </option>
