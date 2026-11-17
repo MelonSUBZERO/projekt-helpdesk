@@ -43,6 +43,8 @@ export default function TechnikTicketsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [realtimeMessage, setRealtimeMessage] = useState("");
+  const [realtimeError, setRealtimeError] = useState("");
+  const [realtimeVersion, setRealtimeVersion] = useState(0);
   const [selectedTicket, setSelectedTicket] = useState<TicketRecord | null>(null);
   const [editorStatus, setEditorStatus] = useState("nowe");
   const [editorComment, setEditorComment] = useState("");
@@ -124,29 +126,51 @@ export default function TechnikTicketsPage() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void loadTicketList();
-  }, [user, role, page, statusFilter, priorityFilter, categoryFilter, sortBy, roomFilter]);
+  }, [user, role, page, statusFilter, priorityFilter, categoryFilter, sortBy, roomFilter, realtimeVersion]);
 
   useEffect(() => {
-    if (!user || role !== "technik") {
+    if (!user?.id || role !== "technik") {
       return;
     }
 
+    let isCancelled = false;
     let unsubscribe: (() => void) | undefined;
 
     const subscribe = async () => {
-      unsubscribe = await pb.collection("tickets").subscribe("*", async () => {
-        setRealtimeMessage("Zaktualizowano listę zgłoszeń.");
-        setPage(1);
-        await loadTicketList();
-      });
+      try {
+        const stopSubscription = await pb.collection("tickets").subscribe("*", () => {
+          if (isCancelled) {
+            return;
+          }
+
+          setRealtimeError("");
+          setRealtimeMessage("Zaktualizowano listę zgłoszeń.");
+          setPage(1);
+          setRealtimeVersion((version) => version + 1);
+        });
+
+        if (isCancelled) {
+          await stopSubscription();
+          return;
+        }
+
+        unsubscribe = stopSubscription;
+      } catch (subscriptionError) {
+        if (!isCancelled) {
+          setRealtimeError(getPocketbaseErrorMessage(subscriptionError));
+        }
+      }
     };
 
     void subscribe();
 
     return () => {
-      unsubscribe?.();
+      isCancelled = true;
+      if (unsubscribe) {
+        void unsubscribe();
+      }
     };
-  }, [user, role, statusFilter, priorityFilter, sortBy, roomFilter]);
+  }, [user?.id, role]);
 
   const statusLabel = useMemo(
     () => ({
@@ -253,6 +277,12 @@ export default function TechnikTicketsPage() {
 
         {realtimeMessage ? (
           <div className="rounded-md border border-green-500/30 bg-green-500/5 p-3 text-sm text-green-700 dark:text-green-400">{realtimeMessage}</div>
+        ) : null}
+
+        {realtimeError ? (
+          <p className="rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive">
+            Nie udało się uruchomić automatycznego odświeżania: {realtimeError}
+          </p>
         ) : null}
 
         {error ? <p className="rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive">{error}</p> : null}
