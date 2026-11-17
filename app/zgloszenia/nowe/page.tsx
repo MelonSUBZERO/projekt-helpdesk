@@ -204,6 +204,7 @@ export default function NewTicketPage() {
                   >
                     <option value="multimedia">Multimedia</option>
                     <option value="instalacje">Instalacje</option>
+                    <option value="sprzet_komputerowy">Sprzęt komputerowy</option>
                     <option value="inne">Inne</option>
                   </select>
                   {errors.kategoria ? <p className="text-sm text-destructive">{errors.kategoria.message}</p> : null}

@@ -37,6 +37,7 @@ export default function TechnikTicketsPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
   const [sortBy, setSortBy] = useState("-created");
   const [roomFilter, setRoomFilter] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -60,6 +61,14 @@ export default function TechnikTicketsPage() {
     { value: "niski", label: "Niski" },
     { value: "sredni", label: "Średni" },
     { value: "wysoki", label: "Wysoki" },
+  ];
+
+  const categoryOptions = [
+    { value: "all", label: "Wszystkie" },
+    { value: "multimedia", label: "Multimedia" },
+    { value: "instalacje", label: "Instalacje" },
+    { value: "sprzet_komputerowy", label: "Sprzęt komputerowy" },
+    { value: "inne", label: "Inne" },
   ];
 
   const sortOptions = [
@@ -88,6 +97,10 @@ export default function TechnikTicketsPage() {
         filterParts.push(pb.filter("priorytet = {:priority}", { priority: priorityFilter }));
       }
 
+      if (categoryFilter !== "all") {
+        filterParts.push(pb.filter("kategoria = {:category}", { category: categoryFilter }));
+      }
+
       if (roomFilter.trim()) {
         filterParts.push(pb.filter("sala ~ {:room}", { room: roomFilter.trim() }));
       }
@@ -111,7 +124,7 @@ export default function TechnikTicketsPage() {
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     void loadTicketList();
-  }, [user, role, page, statusFilter, priorityFilter, sortBy, roomFilter]);
+  }, [user, role, page, statusFilter, priorityFilter, categoryFilter, sortBy, roomFilter]);
 
   useEffect(() => {
     if (!user || role !== "technik") {
@@ -157,6 +170,7 @@ export default function TechnikTicketsPage() {
     () => ({
       multimedia: "Multimedia",
       instalacje: "Instalacje",
+      sprzet_komputerowy: "Sprzęt komputerowy",
       inne: "Inne",
     }),
     [],
@@ -223,6 +237,7 @@ export default function TechnikTicketsPage() {
   const clearFilters = () => {
     setStatusFilter("all");
     setPriorityFilter("all");
+    setCategoryFilter("all");
     setSortBy("-created");
     setRoomFilter("");
     setPage(1);
@@ -244,7 +259,7 @@ export default function TechnikTicketsPage() {
 
         <Card>
           <CardContent className="space-y-4 p-4">
-            <div className="grid gap-3 md:grid-cols-5">
+            <div className="grid gap-3 md:grid-cols-6">
               <div className="space-y-2">
                 <label className="text-sm font-medium">Status</label>
                 <select
@@ -274,6 +289,24 @@ export default function TechnikTicketsPage() {
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                 >
                   {priorityOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Kategoria</label>
+                <select
+                  value={categoryFilter}
+                  onChange={(event) => {
+                    setCategoryFilter(event.target.value);
+                    setPage(1);
+                  }}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                >
+                  {categoryOptions.map((option) => (
                     <option key={option.value} value={option.value}>
                       {option.label}
                     </option>
